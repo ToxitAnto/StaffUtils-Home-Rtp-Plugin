@@ -1,44 +1,122 @@
-package it.staffplugin.commands;
+# ============================
+#   By ck_anto
+# ============================
 
-import it.staffplugin.StaffPlugin;
-import org.bukkit.Bukkit;
-import org.bukkit.command.*;
-import org.bukkit.entity.Player;
+prefix: "&8[&bStaff&8] &r"
 
-public class FlySpeedCommand implements CommandExecutor {
-    private final StaffPlugin plugin;
-    public FlySpeedCommand(StaffPlugin p) { this.plugin = p; }
+staff:
 
-    @Override
-    public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) {
-        if (!sender.hasPermission("staffplugin.staff.flyspeed")) { sender.sendMessage(plugin.msg("no-permission")); return true; }
-        if (args.length < 1) { sender.sendMessage(StaffPlugin.colorize("&cUso: /flyspeed <1-10> [player]")); return true; }
+  vanish-join-message: "&7[&eV&7] &a{player} si è connesso."
+  vanish-quit-message: "&7[&eV&7] &c{player} si è disconnesso."
 
-        int speed;
-        try { speed = Integer.parseInt(args[0]); } catch (NumberFormatException e) {
-            sender.sendMessage(StaffPlugin.colorize("&cInserisci un numero valido tra 1 e 10!")); return true;
-        }
-        int max = plugin.getConfig().getInt("staff.max-fly-speed", 10);
-        if (speed < 1 || speed > max) {
-            sender.sendMessage(StaffPlugin.colorize("&cLa velocità deve essere tra 1 e " + max + "!")); return true;
-        }
+  max-fly-speed: 10
 
-        Player target;
-        if (args.length > 1) {
-            target = Bukkit.getPlayer(args[1]);
-            if (target == null) { sender.sendMessage(plugin.msg("player-not-found").replace("{player}", args[1])); return true; }
-        } else if (sender instanceof Player p) {
-            target = p;
-        } else {
-            sender.sendMessage(plugin.msg("player-only")); return true;
-        }
+  default-mute-duration: 0
 
-        float flySpeed = speed / 10.0f;
-        target.setFlySpeed(flySpeed);
-        target.setAllowFlight(true);
-        target.sendMessage(StaffPlugin.colorize("&aVelocità di volo impostata a &e" + speed + "&a!"));
-        if (!sender.getName().equals(target.getName()))
-            sender.sendMessage(StaffPlugin.colorize("&aVelocità di volo di &e" + target.getName() + " &aimpostata a &e" + speed + "&a!"));
-        return true;
-    }
-}
+home:
+ 
+  max-homes: 3
+
+  max-homes-vip: 5
+
+  max-homes-staff: 10
+ 
+  menu-title: "&8» &bLe Tue Home &8«"
+ 
+  teleport-delay: 3
+
+  teleport-message: "&aTeleportato alla home &e{home}&a!"
+
+spawn:
+
+  teleport-on-join: true
+
+  teleport-delay: 0
+
+  welcome-message: "&aRientrato allo Spawn!"
+
+shop:
+  main-title: "&8» &6Shop &8«"
+
+  categories:
+    blocchi:
+      title: "&8» &6Blocchi &8«"
+      icon: GRASS_BLOCK
+      slot: 11
+      display-name: "&6Blocchi"
+      lore:
+        - "&7Compra e vendi blocchi"
+    cibo:
+      title: "&8» &6Cibo &8«"
+      icon: BREAD
+      slot: 13
+      display-name: "&6Cibo"
+      lore:
+        - "&7Compra e vendi cibo"
+    strumenti:
+      title: "&8» &6Strumenti &8«"
+      icon: DIAMOND_PICKAXE
+      slot: 15
+      display-name: "&6Strumenti"
+      lore:
+        - "&7Compra e vendi strumenti"
+
+  items:
+    GRASS_BLOCK:
+      buy: 5.0
+      sell: 2.0
+      category: blocchi
+    STONE:
+      buy: 3.0
+      sell: 1.0
+      category: blocchi
+    OAK_LOG:
+      buy: 8.0
+      sell: 4.0
+      category: blocchi
+    BREAD:
+      buy: 4.0
+      sell: 2.0
+      category: cibo
+    COOKED_BEEF:
+      buy: 10.0
+      sell: 5.0
+      category: cibo
+    APPLE:
+      buy: 3.0
+      sell: 1.5
+      category: cibo
+    DIAMOND_PICKAXE:
+      buy: 500.0
+      sell: 200.0
+      category: strumenti
+    IRON_SWORD:
+      buy: 80.0
+      sell: 30.0
+      category: strumenti
+
+rtp:
+  min-radius: 500
+  max-radius: 10000
+  max-attempts: 15
+  cooldown: 300
+  world: "world"
+  message: "&aTeleportato in una posizione casuale!"
+
+  teleport-delay: 5
+
+messages:
+  no-permission: "&cNon hai i permessi per farlo!"
+  player-not-found: "&cGiocatore &e{player} &cnon trovato!"
+  player-only: "&cSolo i giocatori possono usare questo comando!"
+  ban-message: "&cSei stato bannato!\n&7Motivo: &e{reason}\n&7Da: &e{by}"
+  mute-message: "&cSei stato mutato!\n&7Motivo: &e{reason}"
+  already-muted: "&cQuesto giocatore è già mutato!"
+  not-muted: "&cQuesto giocatore non è mutato!"
+  rtp-cooldown: "&cDevi aspettare &e{time} &csecondi prima di usare /rtp di nuovo!"
+  home-not-found: "&cHome &e{home} &cnon trovata!"
+  home-limit: "&cHai raggiunto il limite massimo di home ({max})!"
+  home-set: "&aHome &e{home} &aimpostata!"
+  home-deleted: "&aHome &e{home} &aeliminata!"
+  spawn-set: "&aSpawn impostato!"
+  invsee-offline: "&cNon puoi vedere l'inventario di un giocatore offline!"
