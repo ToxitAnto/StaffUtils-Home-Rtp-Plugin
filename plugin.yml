@@ -1,42 +1,138 @@
-package it.staffplugin.commands;
+name: StaffPlugin
+version: ${project.version}
+main: it.staffplugin.StaffPlugin
+api-version: '1.21'
+description: Plugin completo Staff, Home, Spawn, Shop, RTP
+author: StaffPlugin
 
-import it.staffplugin.StaffPlugin;
-import org.bukkit.command.*;
-import org.bukkit.entity.Player;
+commands:
+  # Staff
+  gmc:
+    description: Gamemode Creativo
+    usage: /gmc [player]
+    permission: staffplugin.staff.gmc
+  gms:
+    description: Gamemode Survival
+    usage: /gms [player]
+    permission: staffplugin.staff.gms
+  gmsp:
+    description: Gamemode Spectator
+    usage: /gmsp [player]
+    permission: staffplugin.staff.gmsp
+  vanish:
+    description: Vanish
+    usage: /vanish [player]
+    permission: staffplugin.staff.vanish
+  tpto:
+    description: Teleport to player
+    usage: /tpto <player>
+    permission: staffplugin.staff.tpto
+  flyspeed:
+    description: Imposta velocità di volo
+    usage: /flyspeed <1-10> [player]
+    permission: staffplugin.staff.flyspeed
+  ban:
+    description: Banna un giocatore
+    usage: /ban <player> [reason]
+    permission: staffplugin.staff.ban
+  unban:
+    description: Sbanna un giocatore
+    usage: /unban <player>
+    permission: staffplugin.staff.unban
+  mute:
+    description: Muta un giocatore
+    usage: /mute <player> [reason]
+    permission: staffplugin.staff.mute
+  unmute:
+    description: Desmuta un giocatore
+    usage: /unmute <player>
+    permission: staffplugin.staff.unmute
+  ipban:
+    description: Banna un IP
+    usage: /ipban <player> [reason]
+    permission: staffplugin.staff.ipban
+  invsee:
+    description: Guarda inventario di un giocatore
+    usage: /invsee <player>
+    permission: staffplugin.staff.invsee
+  banhistory:
+    description: Vedi storia ban di un giocatore
+    usage: /banhistory <player>
+    permission: staffplugin.staff.banhistory
+  checkalt:
+    description: Controlla account alt
+    usage: /checkalt <player>
+    permission: staffplugin.staff.checkalt
+  dupeip:
+    description: Trova giocatori con stesso IP
+    usage: /dupeip <player>
+    permission: staffplugin.staff.dupeip
+  # Home
+  home:
+    description: Apri menu home
+    usage: /home
+    permission: staffplugin.home
+  sethome:
+    description: Imposta home
+    usage: /sethome <name>
+    permission: staffplugin.home
+  delhome:
+    description: Elimina home
+    usage: /delhome <name>
+    permission: staffplugin.home
+  # Spawn
+  setspawn:
+    description: Imposta spawn del server
+    usage: /setspawn
+    permission: staffplugin.setspawn
+  spawn:
+    description: Torna allo spawn
+    usage: /spawn
+    permission: staffplugin.spawn
+  # Shop
+  shop:
+    description: Apri lo shop
+    usage: /shop
+    permission: staffplugin.shop
+  # RTP
+  rtp:
+    description: Teleport casuale
+    usage: /rtp
+    permission: staffplugin.rtp
 
-public class SpawnCommand implements CommandExecutor {
-    private final StaffPlugin plugin;
-    public SpawnCommand(StaffPlugin p) { this.plugin = p; }
-
-    @Override
-    public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) {
-        if (!(sender instanceof Player player)) { sender.sendMessage(plugin.msg("player-only")); return true; }
-        if (!player.hasPermission("staffplugin.spawn")) { player.sendMessage(plugin.msg("no-permission")); return true; }
-
-        if (!plugin.getSpawnManager().hasSpawn()) {
-            player.sendMessage(StaffPlugin.colorize("&cLo spawn non è ancora stato impostato! Usa /setspawn per impostarlo."));
-            return true;
-        }
-
-        int delay = plugin.getConfig().getInt("spawn.teleport-delay", 0);
-        String welcomeMsg = StaffPlugin.colorize(plugin.getConfig().getString("spawn.welcome-message", "&aRientrato allo Spawn!"));
-
-        if (delay > 0) {
-            player.sendMessage(StaffPlugin.colorize("&aTeleportazione allo spawn tra &e" + delay + " &asecondi..."));
-            var startLoc = player.getLocation().clone();
-            org.bukkit.Bukkit.getScheduler().runTaskLater(plugin, () -> {
-                if (!player.isOnline()) return;
-                if (player.getLocation().distance(startLoc) > 1) {
-                    player.sendMessage(StaffPlugin.colorize("&cTeleportazione annullata!"));
-                    return;
-                }
-                player.teleport(plugin.getSpawnManager().getSpawn());
-                player.sendMessage(welcomeMsg);
-            }, delay * 20L);
-        } else {
-            player.teleport(plugin.getSpawnManager().getSpawn());
-            player.sendMessage(welcomeMsg);
-        }
-        return true;
-    }
-}
+permissions:
+  staffplugin.staff.*:
+    description: Tutti i permessi staff
+    children:
+      staffplugin.staff.gmc: true
+      staffplugin.staff.gms: true
+      staffplugin.staff.gmsp: true
+      staffplugin.staff.vanish: true
+      staffplugin.staff.tpto: true
+      staffplugin.staff.flyspeed: true
+      staffplugin.staff.ban: true
+      staffplugin.staff.unban: true
+      staffplugin.staff.mute: true
+      staffplugin.staff.unmute: true
+      staffplugin.staff.ipban: true
+      staffplugin.staff.invsee: true
+      staffplugin.staff.banhistory: true
+      staffplugin.staff.checkalt: true
+      staffplugin.staff.dupeip: true
+  staffplugin.*:
+    description: Tutti i permessi del plugin
+    children:
+      staffplugin.staff.*: true
+      staffplugin.home: true
+      staffplugin.setspawn: true
+      staffplugin.spawn: true
+      staffplugin.shop: true
+      staffplugin.rtp: true
+  balance:
+    description: Visualizza il tuo saldo
+    usage: /balance [player]
+    permission: staffplugin.balance
+  eco:
+    description: Gestisci il saldo dei giocatori
+    usage: /eco <give|take|set> <player> <importo>
+    permission: staffplugin.staff.eco
