@@ -1,0 +1,42 @@
+package it.staffplugin.commands;
+
+import it.staffplugin.StaffPlugin;
+import org.bukkit.command.*;
+import org.bukkit.entity.Player;
+
+public class SpawnCommand implements CommandExecutor {
+    private final StaffPlugin plugin;
+    public SpawnCommand(StaffPlugin p) { this.plugin = p; }
+
+    @Override
+    public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) {
+        if (!(sender instanceof Player player)) { sender.sendMessage(plugin.msg("player-only")); return true; }
+        if (!player.hasPermission("staffplugin.spawn")) { player.sendMessage(plugin.msg("no-permission")); return true; }
+
+        if (!plugin.getSpawnManager().hasSpawn()) {
+            player.sendMessage(StaffPlugin.colorize("&cLo spawn non è ancora stato impostato! Usa /setspawn per impostarlo."));
+            return true;
+        }
+
+        int delay = plugin.getConfig().getInt("spawn.teleport-delay", 0);
+        String welcomeMsg = StaffPlugin.colorize(plugin.getConfig().getString("spawn.welcome-message", "&aRientrato allo Spawn!"));
+
+        if (delay > 0) {
+            player.sendMessage(StaffPlugin.colorize("&aTeleportazione allo spawn tra &e" + delay + " &asecondi..."));
+            var startLoc = player.getLocation().clone();
+            org.bukkit.Bukkit.getScheduler().runTaskLater(plugin, () -> {
+                if (!player.isOnline()) return;
+                if (player.getLocation().distance(startLoc) > 1) {
+                    player.sendMessage(StaffPlugin.colorize("&cTeleportazione annullata!"));
+                    return;
+                }
+                player.teleport(plugin.getSpawnManager().getSpawn());
+                player.sendMessage(welcomeMsg);
+            }, delay * 20L);
+        } else {
+            player.teleport(plugin.getSpawnManager().getSpawn());
+            player.sendMessage(welcomeMsg);
+        }
+        return true;
+    }
+}

@@ -1,0 +1,44 @@
+package it.staffplugin.commands;
+
+import it.staffplugin.StaffPlugin;
+import org.bukkit.Bukkit;
+import org.bukkit.command.*;
+import org.bukkit.entity.Player;
+
+public class FlySpeedCommand implements CommandExecutor {
+    private final StaffPlugin plugin;
+    public FlySpeedCommand(StaffPlugin p) { this.plugin = p; }
+
+    @Override
+    public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) {
+        if (!sender.hasPermission("staffplugin.staff.flyspeed")) { sender.sendMessage(plugin.msg("no-permission")); return true; }
+        if (args.length < 1) { sender.sendMessage(StaffPlugin.colorize("&cUso: /flyspeed <1-10> [player]")); return true; }
+
+        int speed;
+        try { speed = Integer.parseInt(args[0]); } catch (NumberFormatException e) {
+            sender.sendMessage(StaffPlugin.colorize("&cInserisci un numero valido tra 1 e 10!")); return true;
+        }
+        int max = plugin.getConfig().getInt("staff.max-fly-speed", 10);
+        if (speed < 1 || speed > max) {
+            sender.sendMessage(StaffPlugin.colorize("&cLa velocità deve essere tra 1 e " + max + "!")); return true;
+        }
+
+        Player target;
+        if (args.length > 1) {
+            target = Bukkit.getPlayer(args[1]);
+            if (target == null) { sender.sendMessage(plugin.msg("player-not-found").replace("{player}", args[1])); return true; }
+        } else if (sender instanceof Player p) {
+            target = p;
+        } else {
+            sender.sendMessage(plugin.msg("player-only")); return true;
+        }
+
+        float flySpeed = speed / 10.0f;
+        target.setFlySpeed(flySpeed);
+        target.setAllowFlight(true);
+        target.sendMessage(StaffPlugin.colorize("&aVelocità di volo impostata a &e" + speed + "&a!"));
+        if (!sender.getName().equals(target.getName()))
+            sender.sendMessage(StaffPlugin.colorize("&aVelocità di volo di &e" + target.getName() + " &aimpostata a &e" + speed + "&a!"));
+        return true;
+    }
+}
