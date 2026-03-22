@@ -3,10 +3,10 @@ version: ${project.version}
 main: it.staffplugin.StaffPlugin
 api-version: '1.21'
 description: Plugin completo Staff, Home, Spawn, Shop, RTP
-author: StaffPlugin
+author: Ck_Ant0
 
 commands:
-  # Staff
+
   gmc:
     description: Gamemode Creativo
     usage: /gmc [player]
@@ -67,7 +67,7 @@ commands:
     description: Trova giocatori con stesso IP
     usage: /dupeip <player>
     permission: staffplugin.staff.dupeip
-  # Home
+
   home:
     description: Apri menu home
     usage: /home
@@ -80,7 +80,7 @@ commands:
     description: Elimina home
     usage: /delhome <name>
     permission: staffplugin.home
-  # Spawn
+
   setspawn:
     description: Imposta spawn del server
     usage: /setspawn
@@ -89,12 +89,12 @@ commands:
     description: Torna allo spawn
     usage: /spawn
     permission: staffplugin.spawn
-  # Shop
+
   shop:
     description: Apri lo shop
     usage: /shop
     permission: staffplugin.shop
-  # RTP
+
   rtp:
     description: Teleport casuale
     usage: /rtp
