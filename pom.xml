@@ -1,25 +1,72 @@
-package it.staffplugin.commands;
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
 
-import it.staffplugin.StaffPlugin;
-import org.bukkit.Bukkit;
-import org.bukkit.command.*;
-import org.bukkit.entity.Player;
+    <groupId>it.staffplugin</groupId>
+    <artifactId>StaffPlugin</artifactId>
+    <version>1.0.0</version>
+    <packaging>jar</packaging>
 
-public class TptoCommand implements CommandExecutor {
-    private final StaffPlugin plugin;
-    public TptoCommand(StaffPlugin p) { this.plugin = p; }
+    <name>StaffPlugin</name>
+    <description>Plugin completo Staff, Home, Spawn, Shop, RTP per MC 1.21.1</description>
 
-    @Override
-    public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) {
-        if (!(sender instanceof Player player)) { sender.sendMessage(plugin.msg("player-only")); return true; }
-        if (!player.hasPermission("staffplugin.staff.tpto")) { player.sendMessage(plugin.msg("no-permission")); return true; }
-        if (args.length < 1) { player.sendMessage(StaffPlugin.colorize("&cUso: /tpto <player>")); return true; }
+    <properties>
+        <maven.compiler.source>21</maven.compiler.source>
+        <maven.compiler.target>21</maven.compiler.target>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    </properties>
 
-        Player target = Bukkit.getPlayer(args[0]);
-        if (target == null) { player.sendMessage(plugin.msg("player-not-found").replace("{player}", args[0])); return true; }
+    <repositories>
+        <repository>
+            <id>papermc</id>
+            <url>https://repo.papermc.io/repository/maven-public/</url>
+        </repository>
+    </repositories>
 
-        player.teleport(target.getLocation());
-        player.sendMessage(StaffPlugin.colorize("&aTeleportato da &e" + target.getName() + "&a!"));
-        return true;
-    }
-}
+    <dependencies>
+        <dependency>
+            <groupId>io.papermc.paper</groupId>
+            <artifactId>paper-api</artifactId>
+            <version>1.21.1-R0.1-SNAPSHOT</version>
+            <scope>provided</scope>
+        </dependency>
+    </dependencies>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <version>3.13.0</version>
+                <configuration>
+                    <source>21</source>
+                    <target>21</target>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-shade-plugin</artifactId>
+                <version>3.6.0</version>
+                <executions>
+                    <execution>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>shade</goal>
+                        </goals>
+                        <configuration>
+                            <createDependencyReducedPom>false</createDependencyReducedPom>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+        <resources>
+            <resource>
+                <directory>src/main/resources</directory>
+                <filtering>true</filtering>
+            </resource>
+        </resources>
+    </build>
+</project>
